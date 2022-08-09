@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import GiphyLoader from './components/GiphyLoader'
 import RiddlePlayer from './components/RiddlePlayer'
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <GiphyLoader></GiphyLoader>
         <RiddlePlayer></RiddlePlayer>
       </main>
     </div>
