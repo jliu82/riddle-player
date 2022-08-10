@@ -6,7 +6,7 @@ import styles from '../../styles/Home.module.css'
 export default function GiphyLoader() {
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY)
 const getRandomGif = async () => {
-    const {data} = await gf.random({ tag: 'funny', rating: 'pg'})
+    const {data} = await gf.random({ tag: '#funny #meme #random', rating: 'pg'})
     setGifData(data)
 };
 

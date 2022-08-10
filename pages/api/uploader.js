@@ -1,4 +1,5 @@
 import multer from "multer";
+import { parseString } from '@fast-csv/parse';
 
 const upload = multer();
 
@@ -14,38 +15,20 @@ export default function handler(req, res) {
       if (err) {
         res.status(400).json({ error: err });
       }
-      res.status(200).send({data: processFiles(req.files)})
+      const data = [];
+      req.files.forEach((file) => {
+        parseString(file.buffer.toString(), { headers: true })
+            .on('error', error => { res.status(400).json({ error });})
+            .on('data', row => data.push(row))
+            .on('end', () => {
+                res.status(200).send({data})
+            });
+    
+      });
+      
     });
   } else {
     res.status(200).json({ status: "it is running" });
   }
 }
-
-export const parseCsvContent = (data) => {
-    // Split into header and rows
-    const [headerRow, ...rows] = data.trim().split("\n");
-    // Split header/rows with comma seperator into array of values
-    const parseRow = (row) => row.replace("\r", "").split(",");
-    const headers = parseRow(headerRow);
-  
-    return rows.map((row) =>
-      parseRow(row)
-        // Reduce values array into an object like: { [header]: value }
-        .reduce(
-          (object, value, index) => ({
-            ...object,
-            [headers[index].toLowerCase()]: value.trim(),
-          }),
-          {}
-        )
-    );
-  };
-
-export const processFiles = (files) => {
-  let data = [];
-  files.forEach((file) => {
-    data = data.concat(parseCsvContent(file.buffer.toString()))
-  });
-  return data;
-};
 
